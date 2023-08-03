@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="QS.Definitions">
+      <HintPath>bin\Debug\net6.0\QS.Definitions.dll</HintPath>
+    </Reference>
+    <Reference Include="QS.Plugins">
+      <HintPath>bin\Debug\net6.0\QS.Plugins.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
