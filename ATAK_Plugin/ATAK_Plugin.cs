@@ -20,7 +20,7 @@ using System.Runtime.CompilerServices;
 using QS.Definitions.Geodesy;
 using QS.Plugins;
 
-namespace ATAK_PortListener
+namespace ATAK_Plugin_Monitorh
 {
     public class ATAK_Plugin : ATAKPlugin
     {
@@ -61,23 +61,11 @@ namespace ATAK_PortListener
 
         }
 
-        //Interface Methods...
-        public void ChangeConfiguration(string callsign, IPAddress serverIP, ushort serverPort, IPType sendType, ushort receivePort, IPType receiveType)
-        {
-            Callsign = callsign;
-            IP_Address = serverIP;
-            PORT = serverPort;
-            SendType = sendType;
-            ReceivePort = receivePort;
-            ReceiveType = receiveType;
-
-            UDPListener();
-        }
 
         //excissive code to handle POI point of conception.  Moving to start/stale time model.  FIX it! ~ajc
-        public void UpdatePOIs(List<POIRecord> poiList)
+        public override void UpdatePOIs(List<POIRecord> poiList)
         {
-            writeToLog("Update POI");
+            writeToLog("UpdatePOIs");
             string outputStr = "";
             string endChar = "___";
             Guid removeItem = Guid.Empty;
@@ -108,8 +96,9 @@ namespace ATAK_PortListener
             }
         }
 
-        public void UpdateUAVPosition(GeoPosition newPosition)
+        public override void UpdateUAVPosition(GeoPosition newPosition, double yaw)
         {
+            writeToLog("UpdateUAVPosition");
             string COTMessage = "";
             DateTime dt = DateTime.Now;
             string timeString = dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
@@ -129,6 +118,29 @@ namespace ATAK_PortListener
             COTMessage += "</event>";
             sendPacket(COTMessage);
         }
+
+        //Interface Methods...
+        public override void ChangeConfiguration(string callsign, IPAddress serverIP, ushort serverPort, IPType sendType, ushort receivePort, IPType receiveType)
+        {
+            writeToLog("ChangeConfiguration");
+            Callsign = callsign;
+            IP_Address = serverIP;
+            PORT = serverPort;
+            SendType = sendType;
+            ReceivePort = receivePort;
+            ReceiveType = receiveType;
+
+            writeToLog(callsign);
+
+            UDPListener();
+        }
+
+        public override void TogglePluginActivation(bool activate)
+        {
+            writeToLog("TogglePluginActivation");
+            Console.WriteLine("Hello from TogglePluginActivation");
+        }
+
         //...
 
         public string createStaticPOI(POIRecord poi)
@@ -270,7 +282,3 @@ namespace ATAK_PortListener
         }
     }
 }
-
-
-
-

@@ -1,0 +1,13 @@
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\bin\Debug\net7.0\ATAK_Plugin.deps.json
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\bin\Debug\net7.0\ATAK_Plugin.dll
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\bin\Debug\net7.0\ATAK_Plugin.pdb
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ATAK_Plugin.csproj.AssemblyReference.cache
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ATAK_Plugin.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ATAK_Plugin.AssemblyInfoInputs.cache
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ATAK_Plugin.AssemblyInfo.cs
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ATAK_Plugin.csproj.CoreCompileInputs.cache
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ATAK_Plugin.csproj.CopyComplete
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ATAK_Plugin.dll
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\refint\ATAK_Plugin.dll
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ATAK_Plugin.pdb
+C:\Users\JacquesJoubert\Code\cs\ATAK_QBase_Plugin\ATAK_Plugin\obj\Debug\net7.0\ref\ATAK_Plugin.dll
