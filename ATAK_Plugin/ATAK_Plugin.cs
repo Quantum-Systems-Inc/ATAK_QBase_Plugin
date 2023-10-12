@@ -31,9 +31,9 @@ namespace ATAK_PortListener
         public IPType SendType { get; set; }
         public ushort ReceivePort { get; set; }
         public IPType ReceiveType { get; set; }
-        //...
 
         public Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        public IPEndPoint Destination;
 
         //Identifier CoT Associations
         public Dictionary<string, string> POI_Type = new Dictionary<string, string> { { "Enemy", "a-h-G" }, { "Unknown", "a-u-G" }, { "Friend", "a-f-G" }, { "Neutral", "a-n-G" } };
@@ -48,22 +48,22 @@ namespace ATAK_PortListener
         //...
 
         //Interface Properties...
-        public string Title => "ATAK Plugin with Config";
-        public string Description => "This will boradcast POI's to user devices on the same local network, including configurable settings in the from the update GUI.";
+        //public string Title => "ATAK Plugin with Config";
+        //public string Description => "This will boradcast POI's to user devices on the same local network, including configurable settings in the from the update GUI.";
 
         //temporary
-        public Action<List<POIRecord>> poiTemp;
+        public Action<List<POIRecord>> poiTemp = null;
 
         //New to interface. Unsure how we want to implement
-        public Action<List<POIRecord>> POIsUpdated { get; set; }
+        //public Action<List<POIRecord>> POIsUpdated { get; set; }
         //...
 
-        public ATAK_Plugin()
-        {
+        //public ATAK_Plugin()
+        //{
 
-        }
+        //}
 
-        //Interface Methods...
+        #region ATAKPlugin
 
         //excissive code to handle POI point of conception.  Moving to start/stale time model.  FIX it! ~ajc
         public override void UpdatePOIs(List<POIRecord> poiList)
@@ -95,7 +95,7 @@ namespace ATAK_PortListener
                 }
                 //end of new ID creation check ~ajc
                 string newPoi = createStaticPOI(poi);
-                sendPacket(newPoi);
+                //sendPacket(newPoi); 
             }
         }
 
@@ -120,10 +120,9 @@ namespace ATAK_PortListener
             COTMessage += "</detail>";
             COTMessage += "</event>";
             sendPacket(COTMessage);
-            writeToLog(COTMessage);
+            //writeToLog(COTMessage); // maybe this is taking too long?
         }
 
-        //Interface Methods...
         public override void ChangeConfiguration(string callsign, IPAddress serverIP, ushort serverPort, IPType sendType, ushort receivePort, IPType receiveType)
         {
             writeToLog("ChangeConfiguration");
@@ -136,6 +135,8 @@ namespace ATAK_PortListener
             ReceivePort = receivePort;
             ReceiveType = receiveType;
 
+            Destination = new IPEndPoint(IP_Address, PORT);
+
             UDPListener();
         }
 
@@ -143,6 +144,8 @@ namespace ATAK_PortListener
         {
             writeToLog("TogglePluginActivation");
         }
+
+        #endregion ATAKPlugin
 
         public string createStaticPOI(POIRecord poi)
         {
@@ -172,8 +175,6 @@ namespace ATAK_PortListener
 
         public void sendPacket(string data)
         {
-            IPEndPoint Destination = new IPEndPoint(IP_Address, PORT);
-
             byte[] buff = Encoding.ASCII.GetBytes(data);
             sock.SendTo(buff, Destination);
         }
@@ -281,7 +282,3 @@ namespace ATAK_PortListener
         }
     }
 }
-
-
-
-
