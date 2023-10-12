@@ -33,6 +33,8 @@ namespace ATAK_PortListener
         public IPType ReceiveType { get; set; }
         //...
 
+        public Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
         //Identifier CoT Associations
         public Dictionary<string, string> POI_Type = new Dictionary<string, string> { { "Enemy", "a-h-G" }, { "Unknown", "a-u-G" }, { "Friend", "a-f-G" }, { "Neutral", "a-n-G" } };
 
@@ -62,20 +64,9 @@ namespace ATAK_PortListener
         }
 
         //Interface Methods...
-        public void ChangeConfiguration(string callsign, IPAddress serverIP, ushort serverPort, IPType sendType, ushort receivePort, IPType receiveType)
-        {
-            Callsign = callsign;
-            IP_Address = serverIP;
-            PORT = serverPort;
-            SendType = sendType;
-            ReceivePort = receivePort;
-            ReceiveType = receiveType;
-
-            UDPListener();
-        }
 
         //excissive code to handle POI point of conception.  Moving to start/stale time model.  FIX it! ~ajc
-        public void UpdatePOIs(List<POIRecord> poiList)
+        public override void UpdatePOIs(List<POIRecord> poiList)
         {
             writeToLog("Update POI");
             string outputStr = "";
@@ -108,8 +99,9 @@ namespace ATAK_PortListener
             }
         }
 
-        public void UpdateUAVPosition(GeoPosition newPosition)
+        public override void UpdateUAVPosition(GeoPosition newPosition, double yaw)
         {
+            writeToLog("UpdateUAVPosition");
             string COTMessage = "";
             DateTime dt = DateTime.Now;
             string timeString = dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
@@ -122,14 +114,35 @@ namespace ATAK_PortListener
             COTMessage += " start=\"" + timeString + "\"";
             COTMessage += " stale=\"" + staleString + "\" how=\"m-g\">";
             COTMessage += " <point lat=\"" + newPosition.Latitude.ToString("N7", new CultureInfo("en-US")) + "\"";
-            COTMessage += " lon =\"" + newPosition.Longitude.ToString("N7", new CultureInfo("en-US")) + "\" hae=\"253\" ce=\"12\" le=\"" + newPosition.AltitudeMSL.ToString() + "\"/>";
+            COTMessage += " lon =\"" + newPosition.Longitude.ToString("N7", new CultureInfo("en-US")) + "\" hae=\"" + newPosition.AltitudeMSL.ToString() + "\" ce=\"12\" le=\"" + newPosition.AltitudeMSL.ToString() + "\"/>";
             COTMessage += "<detail>";
             COTMessage += "<contact callsign=\"UAV Vector\"/>";
             COTMessage += "</detail>";
             COTMessage += "</event>";
             sendPacket(COTMessage);
+            writeToLog(COTMessage);
         }
-        //...
+
+        //Interface Methods...
+        public override void ChangeConfiguration(string callsign, IPAddress serverIP, ushort serverPort, IPType sendType, ushort receivePort, IPType receiveType)
+        {
+            writeToLog("ChangeConfiguration");
+            writeToLog(callsign);
+
+            Callsign = callsign;
+            IP_Address = serverIP;
+            PORT = serverPort;
+            SendType = sendType;
+            ReceivePort = receivePort;
+            ReceiveType = receiveType;
+
+            UDPListener();
+        }
+
+        public override void TogglePluginActivation(bool activate)
+        {
+            writeToLog("TogglePluginActivation");
+        }
 
         public string createStaticPOI(POIRecord poi)
         {
@@ -159,9 +172,7 @@ namespace ATAK_PortListener
 
         public void sendPacket(string data)
         {
-            Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPAddress destinationAddress = IP_Address;
-            IPEndPoint Destination = new IPEndPoint(destinationAddress, PORT);
+            IPEndPoint Destination = new IPEndPoint(IP_Address, PORT);
 
             byte[] buff = Encoding.ASCII.GetBytes(data);
             sock.SendTo(buff, Destination);
