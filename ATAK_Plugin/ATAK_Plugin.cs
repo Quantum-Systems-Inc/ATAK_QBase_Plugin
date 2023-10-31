@@ -24,7 +24,7 @@ namespace ATAK_PortListener
 {
     public class ATAK_Plugin : ATAKPlugin
     {
-        //Local Network Configuration Settings...
+        // Local Network Configuration Settings
         public string Callsign { get; set; }
         public IPAddress IP_Address { get; set; }
         public ushort PORT { get; set; }
@@ -35,28 +35,26 @@ namespace ATAK_PortListener
         public Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         public IPEndPoint Destination;
 
-        //Identifier CoT Associations
+        // Identifier CoT Associations
         public Dictionary<string, string> POI_Type = new Dictionary<string, string> { { "Enemy", "a-h-G" }, { "Unknown", "a-u-G" }, { "Friend", "a-f-G" }, { "Neutral", "a-n-G" } };
 
         //GUID tracer, beofre implemntation of auto updateing POI(s)
         public List<Guid> POI_IDS = new List<Guid>();
 
-        //Log File setup configuration, used in writeToLog()...
+        // Log File setup configuration, used in writeToLog()...
         private static string LogDirectory = Directory.GetCurrentDirectory() + "\\plugins\\";
         private static string LogFile = "pluginLog.txt";
         private static string LogFullPath = LogDirectory + LogFile;
-        //...
 
-        //Interface Properties...
+        // Interface Properties...
         //public string Title => "ATAK Plugin with Config";
         //public string Description => "This will boradcast POI's to user devices on the same local network, including configurable settings in the from the update GUI.";
 
-        //temporary
+        // Temporary
         public Action<List<POIRecord>> poiTemp = null;
 
         //New to interface. Unsure how we want to implement
         //public Action<List<POIRecord>> POIsUpdated { get; set; }
-        //...
 
         //public ATAK_Plugin()
         //{
@@ -68,7 +66,7 @@ namespace ATAK_PortListener
         //excissive code to handle POI point of conception.  Moving to start/stale time model.  FIX it! ~ajc
         public override void UpdatePOIs(List<POIRecord> poiList)
         {
-            writeToLog("Update POI");
+            writeToLog("UpdatePOIs");
             string outputStr = "";
             string endChar = "___";
             Guid removeItem = Guid.Empty;
@@ -95,7 +93,7 @@ namespace ATAK_PortListener
                 }
                 //end of new ID creation check ~ajc
                 string newPoi = createStaticPOI(poi);
-                //sendPacket(newPoi); 
+                sendPacket(newPoi);
             }
         }
 
@@ -120,14 +118,13 @@ namespace ATAK_PortListener
             COTMessage += "</detail>";
             COTMessage += "</event>";
             sendPacket(COTMessage);
-            //writeToLog(COTMessage); // maybe this is taking too long?
+            writeToLog(COTMessage);
         }
 
         public override void ChangeConfiguration(string callsign, IPAddress serverIP, ushort serverPort, IPType sendType, ushort receivePort, IPType receiveType)
         {
             writeToLog("ChangeConfiguration");
             writeToLog(callsign);
-
             Callsign = callsign;
             IP_Address = serverIP;
             PORT = serverPort;
@@ -149,7 +146,8 @@ namespace ATAK_PortListener
 
         public string createStaticPOI(POIRecord poi)
         {
-            writeToLog(poi.Timestamp.ToString());
+            writeToLog("createStaticPOI");
+            //writeToLog(poi.Timestamp.ToString());
             string COTMessage = "";
             string timeString = poi.Timestamp.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
             string staleString = poi.Timestamp.AddSeconds(10).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
@@ -170,6 +168,7 @@ namespace ATAK_PortListener
             COTMessage += "<contact callsign=\"" + contact_callsign + "\"/>";
             COTMessage += "</detail>";
             COTMessage += "</event>";
+            writeToLog(COTMessage);
             return COTMessage;
         }
 
@@ -181,7 +180,43 @@ namespace ATAK_PortListener
 
         public void writeToLog(string msg)
         {
-            File.AppendAllText(LogFullPath, msg + Environment.NewLine);
+            try
+            {
+                File.AppendAllText(LogFullPath, msg + Environment.NewLine);
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("The file or directory cannot be found.");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine("The file or directory cannot be found.");
+            }
+            catch (DriveNotFoundException)
+            {
+                Console.WriteLine("The drive specified in 'path' is invalid.");
+            }
+            catch (PathTooLongException)
+            {
+                Console.WriteLine("'path' exceeds the maximum supported path length.");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine("You do not have permission to create this file.");
+            }
+            catch (IOException e) when ((e.HResult & 0x0000FFFF) == 32)
+            {
+                Console.WriteLine("There is a sharing violation.");
+            }
+            catch (IOException e) when ((e.HResult & 0x0000FFFF) == 80)
+            {
+                Console.WriteLine("The file already exists.");
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine($"An exception occurred:\nError code: " +
+                                  $"{e.HResult & 0x0000FFFF}\nMessage: {e.Message}");
+            }
         }
 
         private async Task UDPListener()
